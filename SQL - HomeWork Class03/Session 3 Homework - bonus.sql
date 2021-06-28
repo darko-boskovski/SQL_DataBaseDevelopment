@@ -66,7 +66,9 @@
 --  Find all the students that have achieved less than 25% from the AchievementMaxPoints for the AchievementType  'Domasni'
 
 
- select s.FirstName + ' ' + s.LastName as Student,  c.Name, gd.AchievementPoints as HomeworkPoints,gd.AchievementMaxPoints as MaxHomeworkPoints
+ create or alter view vv_Student
+	as
+ select s.FirstName + ' ' + s.LastName as Student,  c.Name as CourseName, gd.AchievementPoints as HomeworkPoints,gd.AchievementMaxPoints as MaxHomeworkPoints
  from dbo.[Grade] g
  inner join dbo.Student s on g.StudentID = s.ID
  inner join dbo.GradeDetails gd on gd.GradeID = g.ID
@@ -76,6 +78,13 @@
  group by s.FirstName + ' ' + s.LastName, gd.AchievementPoints, gd.AchievementMaxPoints, c.Name
  having gd.AchievementPoints < (25 * 100 / gd.AchievementMaxPoints) 
  go
+
+ SELECT Student
+ FROM vv_Student
+ UNION 
+ SELECT Student
+ FROM vv_Student
+ GO
 
 
 
