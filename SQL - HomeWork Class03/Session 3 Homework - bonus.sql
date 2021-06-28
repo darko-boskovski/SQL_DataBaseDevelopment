@@ -65,7 +65,8 @@
 
 --  Find all the students that have achieved less than 25% from the AchievementMaxPoints for the AchievementType  'Domasni'
 
- select DISTINCT s.FirstName + ' ' + s.LastName as Student,  c.Name, gd.AchievementPoints as HomeworkPoints,gd.AchievementMaxPoints as MaxHomeworkPoints
+
+ select s.FirstName + ' ' + s.LastName as Student,  c.Name, gd.AchievementPoints as HomeworkPoints,gd.AchievementMaxPoints as MaxHomeworkPoints
  from dbo.[Grade] g
  inner join dbo.Student s on g.StudentID = s.ID
  inner join dbo.GradeDetails gd on gd.GradeID = g.ID
@@ -81,5 +82,15 @@
 
 --  For the Students from the above list check what is their Success (Min, Max and Average grade) and order them by the AVG grade
 
-
+ select s.FirstName + ' ' + s.LastName as Student, max(g.Grade) as MaxGrade, min(g.Grade) as MinGrade, avg(g.Grade) as AvgGrade
+ from dbo.[Grade] g
+ inner join dbo.Student s on g.StudentID = s.ID
+ inner join dbo.GradeDetails gd on gd.GradeID = g.ID
+ inner join dbo.Course c on g.CourseID = c.ID
+ join dbo.AchievementType a on a.ID = gd.AchievementTypeID
+ where a.Name = 'Domasni'
+ group by s.FirstName + ' ' + s.LastName, gd.AchievementPoints, gd.AchievementMaxPoints
+ having gd.AchievementPoints < (25 * 100 / gd.AchievementMaxPoints)
+ order by avg(g.Grade)
+ go
 
